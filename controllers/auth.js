@@ -51,7 +51,7 @@ exports.signin = async (req, res, next)=>{
           return  next(new ErrorResponse('Invalid credentials', 400))
         }
 
-        //generateToken(user, 200, res);
+        generateToken(user, 200, res);
     }
     catch(error){
         console.log(error);
