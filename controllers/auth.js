@@ -1,74 +1,64 @@
 const User = require("../models/user");
 const ErrorResponse = require('../utils/errorResponse');
 
-//handle errors
-const handleErrors = (err) => {
-    console.log(err.message, err.code);
-    let errors = { full_name: '', username: '', email: '', password: '', status: '' };
-
-    //validation errors
-    if (err.message.includes('user validation failed')) {
-        Object.values(err.errors).forEach(({ properties }) => {
-            errors[properties.path] = properties.message;
-        });
-    }
-
-    // incorrect username
-    if (err.message === 'incorrect username') {
-        errors.username = 'that username is not registered';
-    }
-
-    // incorrect password
-    if (err.message === 'incorrect password') {
-        errors.password = 'that password is incorrect';
-    }
-
-    //duplicate error code
-    if (err.code === 11000) {
-        errors.email = 'that email is already registered';
-        errors.username = 'that username is already registered';
-        return errors;
-    }
-
-    return errors;
-}
 
 exports.signup = async (req, res, next)=>{
-    const { full_name, username, email, password, status } = req.body;
+
+    const {email} = req.body;
+    const userExist = await User.findOne({email});
+    
+    if (userExist){
+      
+     return  next(new ErrorResponse('E-mail already exists', 400))
+    }
 
     try {
-        const user = await User.create({ full_name, username, email, password, status });
-        res.status(201).json({ 
-            user: user._id,
-            full_name: user.full_name,
-            username: user.username,
-            email: user.email,
-            status: user.status
-         });
+        const user = await User.create(req.body);
+        res.status(201).json({
+            success: true,
+            user
+        })
+        
+    } catch (error) {
+        console.log(error);
+        next(error);
+        
     }
-    catch (err) {
-        const errors = handleErrors(err);
-        res.status(400).json({ errors })
-    }
+   
 }
 
 
 exports.signin = async (req, res, next)=>{
-   const { email, password } = req.body;
 
-    try {
-        const user = await User.signin(email, password);
-        const token = generateToken(user._id);
-        res.status(200).json({ 
-            user_id: user._id,
-            status: user.status,
-            user_token: user.token
-         })
+    try{
+        const {email, password} = req.body;
+        if(!email || !password){
+       
+            return  next(new ErrorResponse('E-mail and password are required', 400))
+        }
+
+        // check user e-mail
+        const user = await User.findOne({email});
+        if(!user){
+           
+            return  next(new ErrorResponse('Invalid credentials', 400))
+        }
+
+        // verify user password
+        const isMatched = await user.comparePassword(password);
+        if (!isMatched){
+         
+          return  next(new ErrorResponse('Invalid credentials', 400))
+        }
+
+        generateToken(user, 200, res);
     }
-    catch (err) {
-        const errors = handleErrors(err);
-        res.status(400).json({ errors });
+    catch(error){
+        console.log(error);
+       
+        next(new ErrorResponse('Cannot log in, check your credentials', 400))
     }
+   
 }
 
 
