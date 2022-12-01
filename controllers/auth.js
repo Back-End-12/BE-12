@@ -65,6 +65,7 @@ exports.signin = async (req, res, next)=>{
 const generateToken = async (user, statusCode, res) =>{
 
     const token = await user.jwtGenerateToken();
+    const role =  user.status;
 
     const options = {
         httpOnly: true,
