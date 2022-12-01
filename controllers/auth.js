@@ -58,7 +58,7 @@ exports.signin = async (req, res, next)=>{
 
     try {
         const user = await User.signin(email, password);
-        const token = generateToken(user.token);
+        const token = generateToken(user._id);
         res.status(200).json({ 
             user_id: user._id,
             status: user.status,
