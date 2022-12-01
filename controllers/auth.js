@@ -65,7 +65,7 @@ exports.signin = async (req, res, next)=>{
 const generateToken = async (user, statusCode, res) =>{
 
     const token = await user.jwtGenerateToken();
-    const role =  user.status;
+    const status =  user.status;
 
     const options = {
         httpOnly: true,
@@ -75,7 +75,7 @@ const generateToken = async (user, statusCode, res) =>{
     res
     .status(statusCode)
     // .cookie('token', token, options )
-    .json({success: true, role, token})
+    .json({success: true, status, token})
 }
 
 
