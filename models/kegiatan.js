@@ -23,11 +23,10 @@ const kegiatanSchema = new mongoose.Schema({
     required: true
 },
 
-  deskripsi: {
+ deskripsi: {
     type: String,
     required: true
-  }
-
-}, {timestamps: true});
+}
+});
 
 module.exports = mongoose.model("Kegiatan", kegiatanSchema);
