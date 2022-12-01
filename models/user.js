@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema({
 
    status: {
        type: String,
-       default: "user"
+       default: null,
    },
 
 
