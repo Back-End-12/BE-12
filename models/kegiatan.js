@@ -3,7 +3,10 @@ const {ObjectId} = mongoose.Schema;
 
 
 const kegiatanSchema = new mongoose.Schema({
-
+   img_kegiatan: {
+      type: String,
+      required: true
+   },
    judul_kegiatan: {
        type: String,
        trim: true,
@@ -24,29 +27,7 @@ const kegiatanSchema = new mongoose.Schema({
     type: String,
     required: true
   }
-// },
-
-//    image: {
-//        public_id: {
-//            type: String,
-//            required: true
-//        },
-//        url: {
-//            type: String,
-//            required: true
-//        }
-   
-//    },
-
-
- 
-
 
 }, {timestamps: true});
-
-
-
-
-
 
 module.exports = mongoose.model("Kegiatan", kegiatanSchema);
